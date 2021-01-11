@@ -45,7 +45,7 @@ typedef struct mcp9700
 } mcp9700_t;
 
 
-void mcp9700_init(adc_unit_t, adc_channel_t);
-void mcp9700_get_value(uint32_t *);
+void    mcp9700_init(adc_unit_t, adc_channel_t);
+int32_t mcp9700_get_value();
 
 #endif /* __MPC977_H__ */

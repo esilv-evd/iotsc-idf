@@ -62,10 +62,10 @@ void mcp9700_init(adc_unit_t unit, adc_channel_t channel)
  *    (https://github.com/espressif/esp-idf/blob/2bfdd036b2dbd07004c8e4f2ffc87c728819b737/examples/peripherals/adc/main/adc1_example_main.c)
  * 3. Convert the voltage using the ESP dedicated function.
  *    (https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv426esp_adc_cal_raw_to_voltage8uint32_tPK29esp_adc_cal_characteristics_t)
- * 4. Compute the temperature value.
+ * 4. Compute and return the temperature value.
  *    (Page 8 of https://ww1.microchip.com/downloads/en/DeviceDoc/20001942G.pdf)
  */
-void mcp9700_get_value(uint32_t *temperature)
+int32_t mcp9700_get_value()
 {
     uint32_t adc_reading = 0;
     uint32_t voltage;
