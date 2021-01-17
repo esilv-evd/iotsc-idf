@@ -49,6 +49,7 @@
 void app_main()
 {
     uint32_t mcp_temp;
+    vma311_data_t vma311_data;
 
     /* Device initialization */
     led_init(BUILTIN_LED_GPIO);
@@ -58,11 +59,19 @@ void app_main()
     while(1)
     {
         /* Data collection */
-        mcp9700_get_value(&mcp_temp);
+        mcp_temp = mcp9700_get_value();
         printf("mcp9700:temp:%d\n", mcp_temp);
-        vma311_get_values();
-        printf("vma311:\n");
-        bme860_get_values();
+        vma311_data = vma311_get_values();
+        if (vma311_data.status == VMA311_OK)
+        {
+            printf("vma311:temp:%d.%d\n", vma311_data.t_int, vma311_data.t_dec);
+            printf("vma311:humidity:%d.%d\n", vma311_data.rh_int, vma311_data.rh_dec);
+        }
+        else
+        {
+            printf("vma311:error\n");
+        }
+        bme680_get_values();
         printf("bme680:\n");
         vTaskDelay(10000 / portTICK_PERIOD_MS);
     }
