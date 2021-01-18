@@ -42,17 +42,16 @@ static        vma311_status_t vma311_check_crc(uint8_t *);
 /**
  * Initialize VMA311.
  *
- * 1. Set fields of the static vma311 structure to be able to acces them
- *    in other functions of this library.
- * 2. Reset the GPIO pins
+ * 1. Reset the GPIO pins
  *    (https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/gpio.html#_CPPv414gpio_reset_pin10gpio_num_t)
- * 3. Delay 1 second until the sensor becomes stable
+ * 2. Delay 1 second until the sensor becomes stable
  */
 void vma311_init(gpio_num_t num)
 {
+    vma311.num = num;
+    vma311.last_read_time = -2000000;
     /* 1. */
     /* 2. */
-    /* 3. */
 }
 
 /**
@@ -166,8 +165,13 @@ vma311_status_t vma311_read_byte(uint8_t *byte)
 }
 
 /**
+ * 
  * Chech the checksum to verify that data are consistent.
+ * Complete:
+ * 1. Compute the checksum and return VMA311_OK or VMA311_CRC_ERROR
  * (Page 5 of https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf)
+ */
 vma311_status_t vma311_check_crc(uint8_t data[])
 {
+  /* 1. */
 }
