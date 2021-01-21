@@ -26,6 +26,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * This code is inspired by:
+ * https://github.com/0nism/esp32-DHT11/blob/master/dht11.c
+ */
+
 #include "vma311.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
