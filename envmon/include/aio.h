@@ -34,8 +34,8 @@
 
 typedef struct aio
 {
-    char *username;
-    char *key;
+    const char *username;
+    const char *key;
 } aio_t;
 
 void aio_init(const char *, const char *);
