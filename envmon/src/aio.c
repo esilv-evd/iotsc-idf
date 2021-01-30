@@ -55,8 +55,10 @@ static esp_err_t aio_handle_http_event(esp_http_client_event_t *);
  */
 void aio_init(const char *username, const char *key)
 {
-    aio.username = username;
-    aio.key = key;
+    aio.username = malloc(strlen(username) + 1);
+    strcpy(aio.username, username);
+    aio.key = malloc(strlen(key) + 1);
+    strcpy(aio.key, key);
 }
 
 /**
