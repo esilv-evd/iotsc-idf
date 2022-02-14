@@ -31,40 +31,22 @@
 
 static mcp9700_t mcp9700;
 
-/**
- * Initialize the ADC to use it with the MCP9700 sensor.
- *
- * 1. Set fields of the static mcp9700 structure to be able to access them
- *    in other function of this library.
- * 2. Configure the ADC: its width and its attenuation.
- *    (https://github.com/espressif/esp-idf/blob/2bfdd036b2dbd07004c8e4f2ffc87c728819b737/examples/peripherals/adc/main/adc1_example_main.c)
- * 3. Get the characteristics of the ADC stored in the eFUSE.
- */
 void mcp9700_init(adc_unit_t unit, adc_channel_t channel)
 {
-    /* 1. */
+    mcp9700.unit = unit;
+    mcp9700.channel = channel;
     if (mcp9700.unit == ADC_UNIT_1)
     {
-        /* 2. */
+        adc1_config_width(ADC_WIDTH);
+        adc1_config_channel_atten(mcp9700.channel, ADC_ATTEN);
     }
     else /* mcp9700.unit == ADC_UNIT_2 */
     {
-        /* 2. */
+        adc2_config_channel_atten(mcp9700.channel, ADC_ATTEN);
     }
-    /* 3. */
+    esp_adc_cal_characterize(mcp9700.unit, ADC_ATTEN, ADC_WIDTH, DEFAULT_VREF, &mcp9700.adc_chars);
 }
 
-/**
- * Get the temperature value measured by the MCP9700 by applying multi-sampling.
- *
- * 1. Sum the values converted by the ADC.
- * 2. Average these value to get a only one sample.
- *    (https://github.com/espressif/esp-idf/blob/2bfdd036b2dbd07004c8e4f2ffc87c728819b737/examples/peripherals/adc/main/adc1_example_main.c)
- * 3. Convert the voltage using the ESP dedicated function.
- *    (https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv426esp_adc_cal_raw_to_voltage8uint32_tPK29esp_adc_cal_characteristics_t)
- * 4. Compute and return the temperature value.
- *    (Page 8 of https://ww1.microchip.com/downloads/en/DeviceDoc/20001942G.pdf)
- */
 int32_t mcp9700_get_value()
 {
     uint32_t adc_reading = 0;
@@ -74,14 +56,16 @@ int32_t mcp9700_get_value()
     {
         if (mcp9700.unit == ADC_UNIT_1)
         {
-            /* 1. */
+            adc_reading += adc1_get_raw(mcp9700.channel);
         }
         else /* mcp9700.unit == ADC_UNIT_2 */
         {
-            /* 1. */
+            int raw;
+            adc2_get_raw((adc2_channel_t)mcp9700.channel, ADC_WIDTH, &raw);
+            adc_reading += raw;
         }
     }
-    /* 2. */
-    /* 3. */
-    /* 4. */
+    adc_reading /= NO_OF_SAMPLES;
+    voltage = esp_adc_cal_raw_to_voltage(adc_reading, &mcp9700.adc_chars);
+    return voltage - 500;
 }
